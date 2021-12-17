@@ -1,27 +1,15 @@
-import requests
-import dotenv
-import os
-import time
+import os 
+import dotenv 
+from src.Telegram_bot import Telegram_bot
 
 dotenv.load_dotenv( dotenv.find_dotenv())
-
 token = os.getenv("TELEGRAM_URL_CONNECTION")
-
 url_base = f"https://api.telegram.org/bot{token}"
 
-run = True
-count = 0
+bot1 = Telegram_bot(token, url_base)
 
-while run:
-    res = requests.get(url_base + "/getUpdates").json()
-    messages_number = len(res['result'])
+user_info = bot1.get_user_info()
+user_message = bot1.get_message()
+get_email = bot1.save_email()
 
-    print(res['result'][count]['message']['text'])
-
-    count += 1
-
-    if(count == messages_number): 
-        run = False
-    time.sleep(1) 
-
-
+print(user_info, " Mensagem: " ,user_message)
