@@ -7,7 +7,6 @@ token = os.getenv("TELEGRAM_URL_CONNECTION")
 url_base = f"https://api.telegram.org/bot{token}"
 
 bot1 = Telegram_bot(token, url_base)
-
 user_info = bot1.get_user_info()
 user_message = bot1.get_message()
 get_email = bot1.save_email()
