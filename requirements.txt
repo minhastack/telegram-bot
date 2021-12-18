@@ -15,6 +15,7 @@ constantly==15.1.0
 cryptography==3.4.8
 cssselect==1.1.0
 distlib==0.3.4
+dotenv==0.19.2
 filelock==3.4.0
 frozenlist==1.2.0
 h2==3.2.0
