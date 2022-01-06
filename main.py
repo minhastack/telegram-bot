@@ -1,18 +1,18 @@
 import os 
 import dotenv 
+import time
 from src.Telegram_bot import Telegram_bot
 
+dotenv.load_dotenv( dotenv.find_dotenv())
+token = os.getenv("TELEGRAM_URL_CONNECTION")
 
-def run():
+while True:
 
-    dotenv.load_dotenv( dotenv.find_dotenv())
-    token = os.getenv("TELEGRAM_URL_CONNECTION")
-    url_base = f"https://api.telegram.org/bot{token}"
+    bot = Telegram_bot(token,'-1001592206421')
+    bot.message_watcher()
+    
+    time.sleep(3)
 
-    bot1 = Telegram_bot(token, url_base)
-    user_info = bot1.get_user_info()
-    user_message = bot1.get_message()
-    get_email = bot1.save_email()
-    print(user_info, " Mensagem: " ,user_message)
-
-run()
+# ['Descolado', 1932640952] - chat_id de derminado usuário
+# 'chat': {'id': -1001592206421, ] - chat id de um determinado grupo
+ 
