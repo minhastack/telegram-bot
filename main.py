@@ -9,10 +9,6 @@ token = os.getenv("TELEGRAM_URL_CONNECTION")
 while True:
 
     bot = Telegram_bot(token,'-1001592206421')
-    bot.message_watcher()
-    
+    message_info = bot.get_message_data()
+    print(message_info["teste"])
     time.sleep(3)
-
-# ['Descolado', 1932640952] - chat_id de derminado usuário
-# 'chat': {'id': -1001592206421, ] - chat id de um determinado grupo
- 

@@ -1,0 +1,51 @@
+{
+    "update_id": 277257741,
+    
+     "message": {
+         "message_id": 308,
+         
+         "from": {
+             "id": 1932640952,
+             "is_bot": false,
+             "first_name": "Descolado",
+             "language_code": "en"
+            },
+           
+            "chat": {
+                "id": -1001592206421,
+                "title": "consultas",
+                "type": "supergroup"
+            },
+            
+            "date": 1641501363,
+            "text": "/minhastack",
+            "entities": [
+                {
+                    "offset": 0,
+                    "length": 11,
+                    "type": "bot_command"
+                }
+            ]
+        }
+}
+
+
+{"message_text": "/minhastack",
+     "update_id": 277257741,
+     "message_id": 308,
+     "message_from": "Descolado",
+     "teste": {"ok": True,
+     "result": [{"update_id": 277257741,
+     "message": {"message_id": 308,
+     "from": {"id": 1932640952,
+     "is_bot": False,
+     "first_name": "Descolado",
+     "language_code": "en"},
+     "chat": {"id": -1001592206421,
+     "title": "consultas",
+     "type": "supergroup"},
+     "date": 1641501363,
+     "text": "/minhastack",
+     "entities": [{"offset": 0,
+     "length": 11,
+     "type": "bot_command"}]}}]}}
