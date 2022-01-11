@@ -1,52 +1,65 @@
 import requests
 class Telegram_bot: 
-    
+   
     def __init__(self, token: str, chat_id_group: str):
 
         self.chat_id_group = chat_id_group
         self.api_connection_url = f"https://api.telegram.org/bot{token}"
-        self.last_message = requests.get(f"{self.api_connection_url}/getUpdates").json()['result'][-1]
         self.answered_messages = []
         self.command_list = {
 
-            "/problema": "Olá, digite:\nstack_bot_responda e sua pergunta em seguida.\nExemplo: \n \n stack_bot_responda qual o site do minhastack?",
             "/minhastack": "Blog:\nhttp://minhastack.com/blog\n\ninstagram:\nhttps://instram.com/minhastack\n\nYoutube:\nhttps://www.youtube.com/channel/UCcHWdlaVbzVP083WlPnHiWA\n\nFacebook:\nhttps://www.facebook.com/minhastack.oficial",
             "/nodejs": "https://nodejs.org/pt-br/docs/",
             "/react": "https://pt-br.reactjs.org/tutorial/tutorial.html#setup-for-the-tutorial",
-            "/python": "documentação python",
-            "/mongo": "docs do mongo",
-            "/express": "docs do express", 
-            "/next": "docs do next", 
+            "/python": "https://docs.python.org/pt-br/3/",
+            "/mongo": "https://docs.mongodb.com/",
+            "/express": "https://expressjs.com/", 
+            "/next": "https://nextjs.org/docs/getting-started", 
+            
         }
-    
+
+    def message_watcher(self):
+        
+        message_data = self.get_message_data()
+
+        chat_id = self.get_chat_infos(message_data)["chat_id"]
+        is_correct_chat = self.chat_check(chat_id)
+        message = message_data["message_text"]
+
+        message_is_command = self.is_comand(message)
+        update_id = message_data["update_id"]
+        
+        all_right = message_is_command and is_correct_chat and not (update_id in self.answered_messages)
+
+        if all_right:
+                response = self.execute_command(message)
+                self.send_message(response)
+                self.answered_messages.append(update_id)
 
     def get_message_data(self) -> dict: 
-        message = self.last_message
-        update_id = message['update_id']
-        message_id = message['message']['message_id']
-        message_from = message['message']['from']['first_name']
-        text  = message['message']['text']
+        message  = requests.get(f"{self.api_connection_url}/getUpdates").json()
+        message_data = {}
         
+        if len(message) > 0: # significa que tem mensagem disponível e não gera error de list index of range 
+            message_data["data"] = message
+            message_data["update_id"] = message["result"][-1]["update_id"]
+            message_data["message_id"] = message["result"][-1]["message"]["message_id"]
+            message_data["message_from"] = message["result"][-1]["message"]["from"]["first_name"]
+            message_data["message_text"]  = message["result"][-1]["message"]["text"]
+        return message_data
 
-        return {
-            "message_text": text, 
-            "update_id": update_id, 
-            "message_id":message_id, 
-            "message_from":message_from,
-            }
-        
     def chat_check(self, chat_id) -> bool:
         is_correct_chat = False
         if not self.chat_id_group == chat_id: 
             is_correct_chat = True
         return is_correct_chat
 
-    def get_chat_infos(self)-> dict:
+    def get_chat_infos(self, message_data)-> dict:
         chat_infos = {}        
 
-        chat_type = self.last_message['message']['chat']["type"]
-        chat_title = self.last_message['message']['chat']["title"]
-        chat_id = self.last_message['message']['chat']['id']
+        chat_type = message_data["data"]["result"][-1]["message"]["chat"]["type"]
+        chat_title = message_data["data"]["result"][-1]["message"]["chat"]["title"]
+        chat_id = message_data["data"]["result"][-1]["message"]["chat"]["id"]
 
         is_correct_chat = self.chat_check(chat_id)
         
@@ -61,15 +74,19 @@ class Telegram_bot:
         chat_id = self.chat_id_group
         url = f"{self.api_connection_url}/sendMessage?chat_id={chat_id}&text={text}"
         requests.get(url)
-    
+
+    def message_is_eddited(self, message: dict):
+        pass
+
     def execute_command(self, comand_message) -> str:
-        response = ''
+        response = ""
         for command in self.command_list: 
             if comand_message == command:
                 response = self.command_list[command]
         return response
 
     def is_comand(self, message) -> bool: 
+
         message_is_command = False
         for command in self.command_list:
             if message == command:
