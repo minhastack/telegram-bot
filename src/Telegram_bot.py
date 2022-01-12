@@ -19,7 +19,6 @@ class Telegram_bot:
         }
 
     def message_watcher(self):
-        
         message_data = self.get_message_data()
 
         chat_id = self.get_chat_infos(message_data)["chat_id"]
@@ -39,14 +38,15 @@ class Telegram_bot:
 
     def get_message_data(self) -> dict: 
         message  = requests.get(f"{self.api_connection_url}/getUpdates").json()
+
         message_data = {}
-        
         if len(message) > 0: # significa que tem mensagem disponível e não gera error de list index of range 
             message_data["data"] = message
             message_data["update_id"] = message["result"][-1]["update_id"]
             message_data["message_id"] = message["result"][-1]["message"]["message_id"]
             message_data["message_from"] = message["result"][-1]["message"]["from"]["first_name"]
             message_data["message_text"]  = message["result"][-1]["message"]["text"]
+        
         return message_data
 
     def chat_check(self, chat_id) -> bool:
@@ -80,7 +80,7 @@ class Telegram_bot:
         pass
 
     def cleanup_ansewered_messages(self) -> None:
-        if len(self.answered_messages) > 2: 
+        if len(self.answered_messages) > 3: 
             self.answered_messages.pop()
 
     def execute_command(self, comand_message) -> str:
@@ -97,3 +97,5 @@ class Telegram_bot:
             if message == command:
                 message_is_command = True
         return message_is_command
+
+
