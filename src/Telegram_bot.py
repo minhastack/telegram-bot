@@ -23,7 +23,6 @@ class Telegram_bot:
         message_data = self.get_message_data()
 
         chat_id = self.get_chat_infos(message_data)["chat_id"]
-        print(f"###{chat_id}###")
         is_correct_chat = self.chat_check(chat_id)
         message = message_data["message_text"]
 

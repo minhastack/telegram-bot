@@ -5,7 +5,7 @@ from src.Telegram_bot import Telegram_bot
 
 dotenv.load_dotenv( dotenv.find_dotenv())
 token = os.getenv("TELEGRAM_URL_CONNECTION")
-bot = Telegram_bot(token,'-1001592206421')
+bot = Telegram_bot(token,'-1001387626450')
 
 while True:
     bot.message_watcher()
