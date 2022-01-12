@@ -8,14 +8,14 @@ class Telegram_bot:
         self.answered_messages = []
         self.command_list = {
 
+            "/comando":"Comandos disponíveis:\n\n/minhastack - Retorna nossas redes sociais.\n\n/node - retorna a documentação do NodeJS\n\n/react - retorna a documentação do react\n\n/python - retornar a documentação do python\n\n/mongo - retorna a documentação do mongo\n\n/express - retorna a documentação do express\n\n/next - retorna a documentação do nextJS",
             "/minhastack": "Blog:\nhttp://minhastack.com/blog\n\ninstagram:\nhttps://instram.com/minhastack\n\nYoutube:\nhttps://www.youtube.com/channel/UCcHWdlaVbzVP083WlPnHiWA\n\nFacebook:\nhttps://www.facebook.com/minhastack.oficial",
-            "/nodejs": "https://nodejs.org/pt-br/docs/",
+            "/node": "https://nodejs.org/pt-br/docs/",
             "/react": "https://pt-br.reactjs.org/tutorial/tutorial.html#setup-for-the-tutorial",
             "/python": "https://docs.python.org/pt-br/3/",
             "/mongo": "https://docs.mongodb.com/",
             "/express": "https://expressjs.com/", 
             "/next": "https://nextjs.org/docs/getting-started", 
-            
         }
 
     def message_watcher(self):
@@ -23,6 +23,7 @@ class Telegram_bot:
         message_data = self.get_message_data()
 
         chat_id = self.get_chat_infos(message_data)["chat_id"]
+        print(f"###{chat_id}###")
         is_correct_chat = self.chat_check(chat_id)
         message = message_data["message_text"]
 
@@ -35,6 +36,7 @@ class Telegram_bot:
                 response = self.execute_command(message)
                 self.send_message(response)
                 self.answered_messages.append(update_id)
+                self.cleanup_ansewered_messages()
 
     def get_message_data(self) -> dict: 
         message  = requests.get(f"{self.api_connection_url}/getUpdates").json()
@@ -77,6 +79,10 @@ class Telegram_bot:
 
     def message_is_eddited(self, message: dict):
         pass
+
+    def cleanup_ansewered_messages(self) -> None:
+        if len(self.answered_messages) > 2: 
+            self.answered_messages.pop()
 
     def execute_command(self, comand_message) -> str:
         response = ""
