@@ -34,7 +34,6 @@ class Telegram_bot:
                 response = self.execute_command(message)
                 self.send_message(response)
                 self.answered_messages.append(update_id)
-                self.cleanup_ansewered_messages()
 
     def get_message_data(self) -> dict: 
         message  = requests.get(f"{self.api_connection_url}/getUpdates").json()
