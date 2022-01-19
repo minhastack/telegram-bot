@@ -21,14 +21,15 @@ class Telegram_bot:
     def message_watcher(self):
         message_data = self.get_message_data()
 
-        chat_id = self.get_chat_infos(message_data)["chat_id"]
-        is_correct_chat = self.chat_check(chat_id)
+        if message_data == {}:
+            return
+
         message = message_data["message_text"]
 
         message_is_command = self.is_comand(message)
         update_id = message_data["update_id"]
         
-        all_right = message_is_command and is_correct_chat and not (update_id in self.answered_messages)
+        all_right = message_is_command and not (update_id in self.answered_messages)
 
         if all_right:
                 response = self.execute_command(message)
@@ -36,10 +37,12 @@ class Telegram_bot:
                 self.answered_messages.append(update_id)
 
     def get_message_data(self) -> dict: 
-        message  = requests.get(f"{self.api_connection_url}/getUpdates").json()
-
+        message: dict  = requests.get(f"{self.api_connection_url}/getUpdates").json()
         message_data = {}
-        if len(message) > 0: # significa que tem mensagem disponível e não gera error de list index of range 
+
+        is_a_message = "text" in message['result'][-1]["message"]
+        if len(message) > 0 and is_a_message:
+
             message_data["data"] = message
             message_data["update_id"] = message["result"][-1]["update_id"]
             message_data["message_id"] = message["result"][-1]["message"]["message_id"]
@@ -54,15 +57,17 @@ class Telegram_bot:
             is_correct_chat = True
         return is_correct_chat
 
-    def get_chat_infos(self, message_data)-> dict:
-        chat_infos = {}        
+    def get_chat_infos(self, message_data: dict)-> dict:
+        if message_data == {}: 
+            return
 
+        chat_infos = {}        
         chat_type = message_data["data"]["result"][-1]["message"]["chat"]["type"]
         chat_title = message_data["data"]["result"][-1]["message"]["chat"]["title"]
         chat_id = message_data["data"]["result"][-1]["message"]["chat"]["id"]
 
         is_correct_chat = self.chat_check(chat_id)
-        
+
         if is_correct_chat:
             chat_infos["chat_id"] = chat_id 
             chat_infos["chat_type"] = chat_type 
@@ -97,4 +102,24 @@ class Telegram_bot:
                 message_is_command = True
         return message_is_command
 
+    def format_message_problem(self, message):
+        formatted_message: str
 
+        if "/problema" in message: 
+            old_message = message.split("/problema")
+            old_message.remove('')
+            new_message = ",".join(old_message)
+            formatted_message = "+".join(new_message.split())
+        else: 
+            formatted_message = " "
+        
+        return formatted_message
+    
+    async def answer_questions(self, message: str):
+        result = ''        
+        formatted_message = self.format_message_problem(message)
+        
+        if not formatted_message == " ":
+            result = requests.get(f"http://localhost:3333/search/{formatted_message}").json()
+        
+        return result
